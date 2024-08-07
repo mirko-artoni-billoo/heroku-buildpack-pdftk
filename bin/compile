@@ -8,21 +8,34 @@ echo "-----> Installing pdftk"
 TMP_DIR=$(mktemp -d)
 cd $TMP_DIR
 
-# Download pdftk (this example uses a precompiled binary for simplicity)
-curl -L -o pdftk.deb "http://ftp.debian.org/debian/pool/main/p/pdftk/pdftk_2.02-4_amd64.deb"
+# Download pdftk from an alternative source
+curl -L -o pdftk.tar.gz "https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/pdftk_free-2.02-src.zip"
 
-# Extract the .deb package
-dpkg -x pdftk.deb .
+# Verify the download
+if [ $? -ne 0 ]; then
+  echo "-----> Error: Failed to download pdftk"
+  exit 1
+fi
+
+# Extract the tarball
+tar -xzf pdftk.tar.gz
+
+# Check if the extraction was successful
+if [ ! -f pdftk ]; then
+  echo "-----> Error: pdftk binary not found after extraction"
+  exit 1
+fi
 
 # Move pdftk binaries to the build directory
 mkdir -p $BUILD_DIR/vendor/pdftk
-mv usr/bin/pdftk $BUILD_DIR/vendor/pdftk/pdftk
+mv pdftk $BUILD_DIR/vendor/pdftk/pdftk
 
 # Clean up
 cd -
 rm -rf $TMP_DIR
 
 # Add pdftk to the PATH
+mkdir -p $BUILD_DIR/.profile.d
 echo "export PATH=\$PATH:\$HOME/vendor/pdftk" >> $BUILD_DIR/.profile.d/pdftk.sh
 
 echo "-----> pdftk installation completed"
