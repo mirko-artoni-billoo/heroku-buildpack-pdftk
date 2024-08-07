@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+# The detect script should output a name for the buildpack if it is to be applied,
+# and exit with a status code of 0. If the buildpack should not be applied,
+# it should output nothing and exit with a status code of 1.
+
+echo "PDftk Buildpack"
+exit 0
