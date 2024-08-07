@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+BUILD_DIR=$1
+
+echo "-----> Installing pdftk"
+
+# Create a temporary directory for downloading pdftk
+TMP_DIR=$(mktemp -d)
+cd $TMP_DIR
+
+# Download pdftk (this example uses a precompiled binary for simplicity)
+curl -L -o pdftk.deb "http://ftp.debian.org/debian/pool/main/p/pdftk/pdftk_2.02-4_amd64.deb"
+
+# Extract the .deb package
+dpkg -x pdftk.deb .
+
+# Move pdftk binaries to the build directory
+mkdir -p $BUILD_DIR/vendor/pdftk
+mv usr/bin/pdftk $BUILD_DIR/vendor/pdftk/pdftk
+
+# Clean up
+cd -
+rm -rf $TMP_DIR
+
+# Add pdftk to the PATH
+echo "export PATH=\$PATH:\$HOME/vendor/pdftk" >> $BUILD_DIR/.profile.d/pdftk.sh
+
+echo "-----> pdftk installation completed"
